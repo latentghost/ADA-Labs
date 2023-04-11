@@ -5,8 +5,10 @@ using namespace std;
 #include<math.h>
 #include<string.h>
 
+#define ll long long
 
-void color(int curr,long long dp[][2],vector<int> adj[],vector<int> visited) {
+
+void color(int curr,ll dp[][2],vector<int> adj[],vector<int> visited) {
     visited[curr-1] = 1;
 
     for(int child:adj[curr]){
@@ -27,7 +29,7 @@ int main()
 
     vector<int> adjl[n+1];
     vector<int> vis(n,0);
-    long long dp[n+1][2];
+    ll dp[n+1][2];
 
     for(int i=0; i<=n; i++)
         dp[i][0] = dp[i][1] = 1;
