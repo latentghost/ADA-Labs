@@ -7,8 +7,10 @@ using namespace std;
 
 #define ll long long
 
+int mod = 1e9 + 7;
 
-void color(int curr,ll dp[][2],vector<int> adj[],vector<int> visited) {
+
+void color(int curr,ll dp[][2],vector<vector<int>> &adj,vector<int> &visited) {
     visited[curr-1] = 1;
 
     for(int child:adj[curr]){
@@ -17,6 +19,8 @@ void color(int curr,ll dp[][2],vector<int> adj[],vector<int> visited) {
 
             dp[curr][0] *= (dp[child][0] + dp[child][1]);
             dp[curr][1] *= dp[child][0];
+            dp[curr][0] %= mod;
+            dp[curr][1] %= mod;
         }
     }
 }
@@ -27,7 +31,7 @@ int main()
     int n;
     cin >> n;
 
-    vector<int> adjl[n+1];
+    vector<vector<int>> adjl(n+1);
     vector<int> vis(n,0);
     ll dp[n+1][2];
 
@@ -42,8 +46,6 @@ int main()
     }
 
     color(1,dp,adjl,vis);
-
-    int mod = 1e9 + 7;
     cout << (dp[1][0] + dp[1][1])%mod << endl;
 
     return 0;

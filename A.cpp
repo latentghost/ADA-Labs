@@ -27,24 +27,30 @@ int main()
     dp[0][0] = dp[0][1] = 1;
 
     for(int i=0; i<n-1; i++){
-        int x = dp[i][0] + dp[i][1];
-        if(a[i+1]!=a[i])
-            dp[i+1][0] = x;
+        ll x = dp[i][0] + dp[i][1];
+        if(a[i+1]!=a[i] && a[i+1]!=b[i])
+            dp[i+1][0] = (int) (x%mod);
         
-        else if(a[i+1]!=b[i])
-            dp[i+1][0] = dp[i][1];
+        else if(a[i+1]==a[i] && a[i+1]!=b[i])
+            dp[i+1][0] = (dp[i][1])%mod;
 
-        else if(a[i+1]==b[i])
+        else if(a[i+1]!=a[i] && a[i+1]==b[i])
+            dp[i+1][0] = (dp[i][0])%mod;
+
+        else
             dp[i+1][0] = 0;
 
 
-        if(b[i+1]!=b[i])
-            dp[i+1][1] = x;
+        if(b[i+1]!=b[i] && b[i+1]!=a[i])
+            dp[i+1][1] = (int) (x%mod);
 
-        else if(b[i+1]!=a[i])
-            dp[i+1][1] = dp[i][0];
+        else if(b[i+1]!=a[i] && b[i+1]==b[i])
+            dp[i+1][1] = (dp[i][0])%mod;
+
+        else if(b[i+1]==a[i] && b[i+1]!=b[i])
+            dp[i+1][1] = (dp[i][1])%mod;
         
-        else if(b[i+1]==a[i])
+        else
             dp[i+1][1] = 0;
 
         
@@ -54,7 +60,13 @@ int main()
         }
     }
 
-    cout << (dp[n-1][0] + dp[n-1][1])%mod << endl;
+    // for(int i=0; i<n; i++){
+    //     cout << dp[i][0] << " " << dp[i][1] << endl;
+    // }
+
+    int out = (int) ((dp[n-1][0] + dp[n-1][1])%mod);
+
+    cout << out << endl;
 
     return 0;
 }
