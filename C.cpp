@@ -6,42 +6,41 @@ using namespace std;
 #include<string.h>
 
 
-#define pb push_back
+#define pb emplace_back
 #define ll long long
 
 
-vector<int> djikstra(vector<vector<pair<int,pair<int,int>>>> &adj){
-    int n = adj.size();
-    vector<int> lens(n,INT_MAX);
+int djikstra(vector<vector<pair<int,pair<int,int>>>> &adj){
+    vector<int> lens(adj.size(),INT_MAX);
     lens[0] = 0;
 
     priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> pq;
     pq.push({0,1});
     
     while(!pq.empty()){
-        int curr = pq.top().second;
-        if(curr==n){
-            return lens;
+        int a = pq.top().second;
+        if(a==adj.size()){
+            return pq.top().first;
         }
         pq.pop();
 
-        for(auto &v: adj[curr-1]){
+        for(int i=0; i<adj[a-1].size(); i++){
             int w = 0;
-            int f = (int) sqrt(v.second.second);
-            if(lens[curr-1]>=f)
-                w = v.second.first + (v.second.second/(1 + lens[curr-1]));
+            int f = (int) sqrt(adj[a-1][i].second.second);
+            if(lens[a-1]>=f)
+                w = adj[a-1][i].second.first + (adj[a-1][i].second.second/(1 + lens[a-1]));
             
             else
-                w = f - lens[curr-1] + v.second.first + v.second.second/(1 + f);
+                w = f - lens[a-1] + adj[a-1][i].second.first + adj[a-1][i].second.second/(1 + f);
             
-            if(lens[curr-1] + w < lens[v.first-1]){
-                lens[v.first-1] = lens[curr-1] + w;
-                pq.push({lens[v.first-1],v.first});
+            if(lens[a-1] + w < lens[adj[a-1][i].first-1]){
+                lens[adj[a-1][i].first-1] = lens[a-1] + w;
+                pq.push({lens[adj[a-1][i].first-1],adj[a-1][i].first});
             }
         }
     }
 
-    return lens;
+    return lens[adj.size()-1];
 }
 
 
@@ -50,29 +49,26 @@ int main()
     int n,m;
     cin >> n >> m;
 
-    vector<vector<pair<int,pair<int,int>>>> wts(n,vector<pair<int,pair<int,int>>>(n,{-1,{INT_MAX,INT_MAX}}));
+    vector<vector<int>> inds(n,vector<int>(n,-1));
     vector<vector<pair<int,pair<int,int>>>> adjl(n);
 
     for(int i=0; i<m; i++){
         int a,b,c,d;
         cin >> a >> b >> c >> d;
         
-        if(wts[a-1][b-1].second.first==INT_MAX){
-            adjl[a-1].pb({b,{c,d}});
-            adjl[b-1].pb({a,{c,d}});
-            wts[a-1][b-1] = {adjl[a-1].size()-1,{c,d}};
-            wts[b-1][a-1] = {adjl[b-1].size()-1,{c,d}};
+        if(inds[a-1][b-1]==-1){
+            adjl[a-1].pb(b,make_pair(c,d));
+            adjl[b-1].pb(a,make_pair(c,d));
+            inds[a-1][b-1] = adjl[a-1].size()-1;
+            inds[b-1][a-1] = adjl[b-1].size()-1;
         }
         else{
-            if(c+d < wts[a-1][b-1].second.first + wts[a-1][b-1].second.second){
-                adjl[a-1][wts[a-1][b-1].first].second = {c,d};
-                adjl[b-1][wts[b-1][a-1].first].second = {c,d};
-                wts[a-1][b-1].second = wts[b-1][a-1].second = {c,d};
+            if(c+d < adjl[a-1][inds[a-1][b-1]].second.first + adjl[a-1][inds[a-1][b-1]].second.second){
+                adjl[a-1][inds[a-1][b-1]].second = {c,d};
+                adjl[b-1][inds[b-1][a-1]].second = {c,d};
             }
         }
     }
 
-    vector<int> times = djikstra(adjl);
-
-    cout << times[n-1] << endl;
+    cout << djikstra(adjl) << endl;
 }
